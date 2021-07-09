@@ -3,6 +3,10 @@ defmodule Tangent do
   Documentation for `Tangent`.
   """
 
+  @type on_start() :: Agent.on_start()
+  @type agent() :: Agent.agent()
+  @type state() :: term()
+
   defmacro __using__(opts) do
     quote do
       require Tangent

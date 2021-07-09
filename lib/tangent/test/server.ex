@@ -10,10 +10,23 @@ defmodule Tangent.Test.Server do
           per_process: %{pid() => term()}
         }
 
-  @spec init(initial: term()) :: {:ok, t()}
+  @type fun() :: function() | {module(), atom(), [any()]}
+
+  @spec init(initial: fun()) :: {:ok, t()}
   def init(initial: fun) do
     initial = run(fun, [])
     {:ok, __struct__(initial: initial, global: initial)}
+  end
+
+  def handle_call({:register, owner}, _from, state) do
+    Process.monitor(owner)
+
+    if Map.has_key?(state.per_process, owner) do
+      {:reply, :ok, state}
+    else
+      per_process = put_in(state.per_process, [owner], state.initial)
+      {:reply, :ok, %{state | per_process: per_process}}
+    end
   end
 
   def handle_call({:get, fun, caller}, _from, state) do
@@ -38,20 +51,57 @@ defmodule Tangent.Test.Server do
     {:noreply, update(state, new_data, caller)}
   end
 
+  def handle_info({:DOWN, _ref, :process, pid, _reason}, state) do
+    per_process = Map.delete(state.per_process, pid)
+    {:noreply, %{state | per_process: per_process}}
+  end
+
   defp data(state, caller) do
-    if Map.keys(state.per_process) |> Enum.member?(caller),
-      do: state.per_process[caller],
-      else: state.global
+    case overloaded_process(caller) do
+      nil ->
+        state.global
+
+      pid ->
+        state.per_process[pid]
+    end
   end
 
   defp run({m, f, a}, extra), do: apply(m, f, extra ++ a)
   defp run(fun, extra), do: apply(fun, extra)
 
   defp update(state, data, caller) do
-    if Map.keys(state.per_process) |> Enum.member?(caller) do
-      %{state | per_process: Map.put(state.per_process, caller, data)}
-    else
-      %{state | global: data}
+    case overloaded_process(caller) do
+      nil ->
+        %{state | global: data}
+
+      pid ->
+        %{state | per_process: Map.put(state.per_process, pid, data)}
+    end
+  end
+
+  defp overloaded_process(nil), do: nil
+
+  defp overloaded_process(caller) do
+    case overloaded?(caller) do
+      pid when is_pid(pid) ->
+        pid
+
+      _ ->
+        with {:dictionary, dictionary} <- Process.info(caller, :dictionary),
+             [parent | _] <- Keyword.get(dictionary, :"$ancestors", :error) do
+          overloaded_process(parent)
+        else
+          _ -> nil
+        end
+    end
+  end
+
+  defp overloaded?(pid) do
+    {:dictionary, dictionary} = Process.info(pid, :dictionary)
+
+    case dictionary |> Keyword.get(:__tangent_overload__) do
+      pid when is_pid(pid) -> pid
+      _ -> false
     end
   end
 end
