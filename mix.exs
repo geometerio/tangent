@@ -12,7 +12,7 @@ defmodule Tangent.MixProject do
       docs: docs(),
       elixir: "~> 1.12",
       homepage_url: @scm_url,
-      name: "Medic",
+      name: "Tangent",
       package: package(),
       preferred_cli_env: [credo: :test, dialyzer: :test],
       source_url: @scm_url,
