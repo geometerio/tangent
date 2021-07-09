@@ -1,7 +1,6 @@
 defmodule Tangent.Test.Agent do
   @moduledoc """
-  An agent which must be started in the test environment before Tangent is used in
-  an application.
+  An agent which will be started in the test environment in place of `Agent`.
   """
 
   @doc """
@@ -43,27 +42,35 @@ defmodule Tangent.Test.Agent do
     end
   end
 
+  @doc false
   def get(agent, fun, timeout, caller),
     do: GenServer.call(agent, {:get, fun, caller}, timeout)
 
+  @doc false
   def get(agent, module, fun, args, timeout, caller),
     do: GenServer.call(agent, {:get, {module, fun, args}, caller}, timeout)
 
+  @doc false
   def get_and_update(agent, fun, timeout, caller),
     do: GenServer.call(agent, {:get_and_update, fun, caller}, timeout)
 
+  @doc false
   def get_and_update(agent, module, fun, args, timeout, caller),
     do: GenServer.call(agent, {:get_and_update, {module, fun, args}, caller}, timeout)
 
+  @doc false
   def update(agent, fun, timeout, caller),
     do: GenServer.call(agent, {:update, fun, caller}, timeout)
 
+  @doc false
   def update(agent, module, fun, args, timeout, caller),
     do: GenServer.call(agent, {:update, {module, fun, args}, caller}, timeout)
 
+  @doc false
   def cast(agent, fun, caller),
     do: GenServer.cast(agent, {:cast, fun, caller})
 
+  @doc false
   def cast(agent, module, fun, args, caller),
     do: GenServer.cast(agent, {:cast, {module, fun, args}, caller})
 end

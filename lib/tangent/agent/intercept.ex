@@ -1,7 +1,5 @@
 defmodule Tangent.Agent.Intercept do
-  @moduledoc """
-  Intercepts all Agent calls and breaks them.
-  """
+  @moduledoc false
 
   @type on_start() :: Tangent.on_start()
   @type agent() :: Tangent.agent()

@@ -1,4 +1,4 @@
-# Tangent
+# Overview
 
 Let your `Agent` calls go on a tangent.
 
@@ -91,3 +91,5 @@ defmodule MyOtherTangentTest do
   end
 end
 ```
+
+<!-- MDOC !-->

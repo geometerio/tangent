@@ -1,7 +1,9 @@
 defmodule Tangent do
-  @moduledoc """
-  Documentation for `Tangent`.
-  """
+  @external_resource "README.md"
+  @moduledoc @external_resource
+             |> File.read!()
+             |> String.split("<!-- MDOC !-->")
+             |> Enum.fetch!(1)
 
   @type on_start() :: Agent.on_start()
   @type agent() :: Agent.agent()

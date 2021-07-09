@@ -56,7 +56,8 @@ defmodule Tangent.MixProject do
     [
       licenses: ["MIT"],
       maintainers: ["Geometer"],
-      links: %{"GitHub" => @scm_url}
+      links: %{"GitHub" => @scm_url},
+      files: ~w(LICENSE.md README.md lib mix.exs)
     ]
   end
 end

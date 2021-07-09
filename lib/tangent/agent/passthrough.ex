@@ -1,7 +1,5 @@
 defmodule Tangent.Agent.Passthrough do
-  @moduledoc """
-  Passes through all calls to Agent.
-  """
+  @moduledoc false
 
   use Agent
 
