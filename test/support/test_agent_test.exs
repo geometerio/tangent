@@ -5,6 +5,8 @@ defmodule Test.Support.TestAgentTest do
   alias Test.Support.Helpers
   alias Test.Support.TestAgent
 
+  require Test.Support.Helpers
+
   ExUnit.Case.register_attribute(__MODULE__, :initial)
 
   setup context do
@@ -20,12 +22,12 @@ defmodule Test.Support.TestAgentTest do
     end
   end
 
-  describe "inc" do
+  describe "put" do
     @initial 15
     test "exercises :update", %{agent: agent} do
       assert TestAgent.current(agent) == 15
-      assert TestAgent.inc(agent) == :ok
-      assert TestAgent.current(agent) == 16
+      assert TestAgent.put(agent, 79) == :ok
+      assert TestAgent.current(agent) == 79
     end
   end
 
@@ -44,6 +46,17 @@ defmodule Test.Support.TestAgentTest do
       assert TestAgent.current(agent) == 29
       assert TestAgent.decrement(agent) == 28
       assert TestAgent.current(agent) == 28
+    end
+  end
+
+  describe "async_put" do
+    @initial 48
+    test "exercises cast", %{agent: agent} do
+      assert TestAgent.current(agent) == 48
+      assert TestAgent.async_put(agent, 99) == :ok
+      assert TestAgent.current(agent) == 48
+
+      Helpers.retry(do: assert(TestAgent.current(agent) == 99))
     end
   end
 end

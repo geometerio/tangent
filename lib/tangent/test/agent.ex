@@ -15,20 +15,22 @@ defmodule Tangent.Test.Agent do
   end
 
   @doc false
-  @spec start_link(module(), (() -> term())) :: GenServer.on_start()
-  def start_link(agent_module, fun) when is_function(fun, 0) do
-    do_start(agent_module, fun)
+  @spec start_link(module(), (() -> term()), GenServer.options()) :: GenServer.on_start()
+  def start_link(agent_module, fun, options \\ []) when is_function(fun, 0) do
+    do_start(agent_module, fun, options)
   end
 
   @doc false
-  @spec start_link(module(), module(), atom(), [any]) :: GenServer.on_start()
-  def start_link(agent_module, module, fun, args) do
-    do_start(agent_module, {module, fun, args})
+  @spec start_link(module(), module(), atom(), [any], GenServer.options()) :: GenServer.on_start()
+  def start_link(agent_module, module, fun, args, options \\ []) do
+    do_start(agent_module, {module, fun, args}, options)
   end
 
-  defp do_start(agent_module, initial) do
-    case GenServer.whereis(agent_module) do
-      nil -> GenServer.start(Tangent.Test.Server, [initial: initial], name: agent_module)
+  defp do_start(agent_module, initial, options) do
+    process = Keyword.get(options, :name, agent_module)
+
+    case GenServer.whereis(process) do
+      nil -> GenServer.start(Tangent.Test.Server, [initial: initial], options)
       server -> {:ok, server}
     end
   end

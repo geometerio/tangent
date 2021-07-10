@@ -30,11 +30,11 @@ defmodule Tangent.Test do
   If passing an overload to a process that has not been started by the current process,
   `Tangent.Test.Agent.register/2` should be used directly.
   """
-  @spec overload(module()) :: Macro.t()
-  defmacro overload(agent_module) do
+  @spec overload(Tangent.agent()) :: Macro.t()
+  defmacro overload(agent) do
     if Mix.env() == :test do
       quote do
-        Tangent.Test.Agent.register(unquote(agent_module), self())
+        Tangent.Test.Agent.register(unquote(agent), self())
       end
     else
       raise "Tangent overloads should only be used when Mix.env() == :test"

@@ -12,7 +12,7 @@ defmodule Test.Support.Helpers do
     "e1d87f6e-fbd5-6801-9528-a1d568c1fd02"
   """
   def uuid do
-    bigenerate() |> encode
+    bigenerate() |> encode()
   end
 
   @doc """
@@ -57,4 +57,28 @@ defmodule Test.Support.Helpers do
 
   defp lower(<<>>, acc),
     do: acc
+
+  defmacro retry(timeout \\ 5000, do: block) do
+    quote do
+      Test.Support.Helpers.retry_for(unquote(timeout), fn -> unquote(block) end)
+    end
+  end
+
+  def retry_for(timeout, fun) when is_function(fun) and is_number(timeout) do
+    DateTime.utc_now()
+    |> DateTime.add(timeout, :millisecond)
+    |> retry_until(fun)
+  end
+
+  def retry_until(%DateTime{} = time, fun) when is_function(fun) do
+    fun.()
+  rescue
+    e ->
+      if DateTime.compare(time, DateTime.utc_now()) == :gt do
+        :timer.sleep(100)
+        retry_until(time, fun)
+      else
+        reraise e, __STACKTRACE__
+      end
+  end
 end

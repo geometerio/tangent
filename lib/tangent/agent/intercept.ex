@@ -6,13 +6,13 @@ defmodule Tangent.Agent.Intercept do
   @type state() :: term()
 
   @spec start_link(module(), (() -> term()), GenServer.options()) :: Macro.t()
-  def start_link(caller_module, fun, _options) when is_function(fun, 0) do
-    Tangent.Test.Agent.start_link(caller_module, fun)
+  def start_link(caller_module, fun, options) when is_function(fun, 0) do
+    Tangent.Test.Agent.start_link(caller_module, fun, options)
   end
 
   @spec start_link(module(), module(), atom(), [any()], GenServer.options()) :: Macro.t()
-  def start_link(caller_module, module, fun, args, _options) do
-    Tangent.Test.Agent.start_link(caller_module, module, fun, args)
+  def start_link(caller_module, module, fun, args, options) do
+    Tangent.Test.Agent.start_link(caller_module, module, fun, args, options)
   end
 
   @spec get(agent(), getter :: (state() -> a), timeout :: integer()) :: a when a: var
