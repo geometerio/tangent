@@ -9,7 +9,6 @@ defmodule Tangent.Agent.Passthrough do
 
   @spec start_link((() -> term()), GenServer.options()) :: on_start()
   def start_link(fun, options \\ []) when is_function(fun) do
-    IO.puts("starting passthrough")
     Agent.start_link(fun, options)
   end
 
