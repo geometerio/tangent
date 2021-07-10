@@ -11,6 +11,7 @@ defmodule Tangent.MixProject do
       dialyzer: dialyzer(),
       docs: docs(),
       elixir: "~> 1.12",
+      elixirc_paths: elixirc_paths(Mix.env()),
       homepage_url: @scm_url,
       name: "Tangent",
       package: package(),
@@ -51,6 +52,9 @@ defmodule Tangent.MixProject do
       source_ref: "v#{@version}"
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp package do
     [
