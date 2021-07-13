@@ -2,7 +2,7 @@ defmodule Tangent.MixProject do
   use Mix.Project
 
   @scm_url "https://github.com/geometerio/tangent"
-  @version "0.2.2"
+  @version "0.2.3"
   def project do
     [
       app: :tangent,
