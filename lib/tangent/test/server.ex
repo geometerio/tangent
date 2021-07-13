@@ -96,12 +96,18 @@ defmodule Tangent.Test.Server do
     end
   end
 
-  defp overloaded?(pid) do
-    {:dictionary, dictionary} = Process.info(pid, :dictionary)
+  defp overloaded?(nil), do: false
 
-    case dictionary |> Keyword.get(:__tangent_overload__) do
-      pid when is_pid(pid) -> pid
-      _ -> false
+  defp overloaded?(pid) do
+    case Process.info(pid, :dictionary) do
+      {:dictionary, dictionary} ->
+        case dictionary |> Keyword.get(:__tangent_overload__) do
+          pid when is_pid(pid) -> pid
+          _ -> false
+        end
+
+      _ ->
+        false
     end
   end
 end
